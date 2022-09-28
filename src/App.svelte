@@ -1,68 +1,77 @@
 <script>
-  import ContactCard from "./ContactCard.svelte";
+  import Header from "./UI/Header.svelte";
+  import MeetupGrid from "./Meetups/MeetupGrid.svelte";
+  import TextInput from "./UI/TextInput.svelte";
+  import Button from "./UI/Button.svelte";
 
-  export let name = ""; // set from props in main.js
   let title = "";
-  let image = "";
+  let subtitle = "";
+  let address = "";
+  let email = "";
   let description = "";
+  let imageUrl = "";
 
-  let formState = "";
-  let contactDetails = [];
+  let meetups = [
+    {
+      id: "m1",
+      title: "Coding Bootcamp",
+      subtitle: "Learn to code in 2 hours",
+      description: "In this meetup, we will have some experts that teach you how to code!",
+      imageUrl:
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Caffe_Nero_coffee_bar%2C_High_St%2C_Sutton%2C_Surrey%2C_Greater_London.JPG/800px-Caffe_Nero_coffee_bar%2C_High_St%2C_Sutton%2C_Surrey%2C_Greater_London.JPG",
+      address: "27th Nerd Road, 32523 New York",
+      contactEmail: "code@test.com",
+    },
+    {
+      id: "m2",
+      title: "Swim Together",
+      subtitle: "Let's go for some swimming",
+      description: "We will simply swim some rounds!",
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Olympic_swimming_pool_%28Tbilisi%29.jpg/800px-Olympic_swimming_pool_%28Tbilisi%29.jpg",
+      address: "27th Nerd Road, 32523 New York",
+      contactEmail: "swim@test.com",
+    },
+  ];
 
-  const checkFormValidity = () => {
-    formState = !!name && !!title && !!image && !!description ? "done" : "invalid";
+  function addMeetup() {
+    const newMeetup = {
+      id: Math.random().toString(),
+      title: title,
+      subtitle: subtitle,
+      description: description,
+      imageUrl: imageUrl,
+      contactEmail: email,
+      address: address,
+    };
 
-    if (formState === "done") {
-      contactDetails = [...contactDetails, { name, title, image, description }];
-    }
-  };
+    // meetups.push(newMeetup); // DOES NOT WORK!
+    meetups = [newMeetup, ...meetups];
+  }
 </script>
 
-<div id="form">
-  <div class="form-control">
-    <label for="userName">User Name</label>
-    <input type="text" bind:value={name} id="userName" />
-  </div>
-  <div class="form-control">
-    <label for="jobTitle">Job Title</label>
-    <input type="text" bind:value={title} id="jobTitle" />
-  </div>
-  <div class="form-control">
-    <label for="image">Image URL</label>
-    <input type="text" bind:value={image} id="image" />
-  </div>
-  <div class="form-control">
-    <label for="desc">Description</label>
-    <textarea rows="3" bind:value={description} id="desc" />
-  </div>
-  <div class="form-control">
-    <button type="submit" on:click={checkFormValidity}>
-      <span>Submit Value</span>
-    </button>
-  </div>
-</div>
+<Header />
 
-{#if formState === "done"}
-  {#each contactDetails as contact, i}
-    <p>{"#" + (i + 1)}</p>
-    <ContactCard userName={contact.name} jobTitle={contact.title} description={contact.description} userImage={contact.image} />
-  {:else}
-    <p class="initial">Please enter all values!</p>
-  {/each}
-{:else if formState === "invalid"}
-  <p class="invalid">Please Enter Valid data!</p>
-{:else}
-  <p class="initial">Please enter all values!</p>
-{/if}
+<main>
+  <form on:submit|preventDefault={addMeetup}>
+    <TextInput id="title" label="Title" type="text" value={title} on:input={(event) => (title = event.target.value)} rows="" controlType="" />
+    <TextInput id="subtitle" label="Subtitle" type="text" value={subtitle} on:input={(event) => (subtitle = event.target.value)} rows="" controlType="" />
+    <TextInput id="address" label="Address" type="text" value={address} on:input={(event) => (address = event.target.value)} rows="" controlType="" />
+    <TextInput id="imageUrl" label="Image URL" type="text" value={imageUrl} on:input={(event) => (imageUrl = event.target.value)} rows="" controlType="" />
+    <TextInput id="email" label="E-Mail" type="email" value={email} on:input={(event) => (email = event.target.value)} rows="" controlType="" />
+    <TextInput id="description" label="Description" controlType="textarea" value={description} on:input={(event) => (description = event.target.value)} type="" rows="3" />
+    <Button type="submit" caption="Save" mode="" href="" />
+  </form>
+  <MeetupGrid {meetups} />
+</main>
 
 <style>
-  #form {
-    width: 30rem;
-    max-width: 100%;
+  main {
+    margin-top: 5rem;
   }
 
-  .invalid,
-  .initial {
-    color: red;
+  form {
+    width: 30rem;
+    max-width: 90%;
+    margin: auto;
   }
 </style>
