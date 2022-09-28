@@ -1,59 +1,68 @@
 <script>
   import ContactCard from "./ContactCard.svelte";
 
-  export let name;
-  let age = "28";
-  let jobDescription = "This is a demo project";
-  let imageURL = "https://www.udemy.com/staticx/udemy/images/v7/logo-udemy-inverted.svg";
-  let jobTitle = "Job Title";
+  export let name = ""; // set from props in main.js
+  let title = "";
+  let image = "";
+  let description = "";
 
-  $: upperCaseName = name.toUpperCase();
-  $: console.log(name);
-  $: console.log(age);
+  let formState = "";
+  let contactDetails = [];
 
-  const incrementAge = () => age++;
-  const decrementAge = function () {
-    age--;
-  };
-  const formatName = () => (name = "Aakash");
-  const nameChange = (event) => {
-    console.log(event);
-    name = event.target.value;
+  const checkFormValidity = () => {
+    formState = !!name && !!title && !!image && !!description ? "done" : "invalid";
+
+    if (formState === "done") {
+      contactDetails = [...contactDetails, { name, title, image, description }];
+    }
   };
 </script>
 
-<h1>Hello my name is {name + " " + upperCaseName} and my age is {age}!</h1>
-<button on:click={incrementAge}>Increment Age</button> |
-<button on:click={decrementAge}>Decrement Age</button> |
-<button on:click={formatName}>Format Name</button>
-
-<br />
-
-<div>
-  <label for={name}>Enter Name:</label>
-  <input type="text" value={name} on:input={nameChange} />
-</div>
-<div>
-  <label for={name + "-2"}>Enter Name Again:</label>
-  <input type="text" bind:value={name} />
-</div>
-<div>
-  <label for="jobTitle">Enter Job Title:</label>
-  <input type="text" bind:value={jobTitle} />
-</div>
-<div>
-  <label for="jobDescription">Enter Job Description:</label>
-  <textarea rows="3" cols="25" bind:value={jobDescription} />
-</div>
-<div>
-  <label for="imageURL">Enter Image URL:</label>
-  <input type="text" bind:value={imageURL} />
+<div id="form">
+  <div class="form-control">
+    <label for="userName">User Name</label>
+    <input type="text" bind:value={name} id="userName" />
+  </div>
+  <div class="form-control">
+    <label for="jobTitle">Job Title</label>
+    <input type="text" bind:value={title} id="jobTitle" />
+  </div>
+  <div class="form-control">
+    <label for="image">Image URL</label>
+    <input type="text" bind:value={image} id="image" />
+  </div>
+  <div class="form-control">
+    <label for="desc">Description</label>
+    <textarea rows="3" bind:value={description} id="desc" />
+  </div>
+  <div class="form-control">
+    <button type="submit" on:click={checkFormValidity}>
+      <span>Submit Value</span>
+    </button>
+  </div>
 </div>
 
-<ContactCard userName={name} {jobDescription} {imageURL} {jobTitle} />
+{#if formState === "done"}
+  {#each contactDetails as contact, i}
+    <p>{"#" + (i + 1)}</p>
+    <ContactCard userName={contact.name} jobTitle={contact.title} description={contact.description} userImage={contact.image} />
+  {:else}
+    <p class="initial">Please enter all values!</p>
+  {/each}
+{:else if formState === "invalid"}
+  <p class="invalid">Please Enter Valid data!</p>
+{:else}
+  <p class="initial">Please enter all values!</p>
+{/if}
 
 <style>
-  h1 {
-    color: purple;
+  #form {
+    width: 30rem;
+    max-width: 100%;
+  }
+
+  .invalid,
+  .initial {
+    color: red;
   }
 </style>
