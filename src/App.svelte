@@ -1,77 +1,91 @@
 <script>
-  import Header from "./UI/Header.svelte";
-  import MeetupGrid from "./Meetups/MeetupGrid.svelte";
-  import TextInput from "./UI/TextInput.svelte";
-  import Button from "./UI/Button.svelte";
+	import Header from './UI/Header.svelte';
+	import Button from './UI/Button.svelte';
+	import MeetupGrid from './Meetups/MeetupGrid.svelte';
+	import EditMeetup from './Meetups/EditMeetup.svelte';
 
-  let title = "";
-  let subtitle = "";
-  let address = "";
-  let email = "";
-  let description = "";
-  let imageUrl = "";
+	let addNewMeetup = false;
 
-  let meetups = [
-    {
-      id: "m1",
-      title: "Coding Bootcamp",
-      subtitle: "Learn to code in 2 hours",
-      description: "In this meetup, we will have some experts that teach you how to code!",
-      imageUrl:
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Caffe_Nero_coffee_bar%2C_High_St%2C_Sutton%2C_Surrey%2C_Greater_London.JPG/800px-Caffe_Nero_coffee_bar%2C_High_St%2C_Sutton%2C_Surrey%2C_Greater_London.JPG",
-      address: "27th Nerd Road, 32523 New York",
-      contactEmail: "code@test.com",
-    },
-    {
-      id: "m2",
-      title: "Swim Together",
-      subtitle: "Let's go for some swimming",
-      description: "We will simply swim some rounds!",
-      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Olympic_swimming_pool_%28Tbilisi%29.jpg/800px-Olympic_swimming_pool_%28Tbilisi%29.jpg",
-      address: "27th Nerd Road, 32523 New York",
-      contactEmail: "swim@test.com",
-    },
-  ];
+	let meetups = [
+		{
+			id: 'm1',
+			title: 'Coding Bootcamp',
+			subtitle: 'Learn to code in 2 hours',
+			description: 'In this meetup, we will have some experts that teach you how to code!',
+			imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Caffe_Nero_coffee_bar%2C_High_St%2C_Sutton%2C_Surrey%2C_Greater_London.JPG/800px-Caffe_Nero_coffee_bar%2C_High_St%2C_Sutton%2C_Surrey%2C_Greater_London.JPG',
+			address: '27th Nerd Road, 32523 New York',
+			contactEmail: 'code@test.com',
+			isFavorite: false,
+		},
+		{
+			id: 'm2',
+			title: 'Swim Together',
+			subtitle: "Let's go for some swimming",
+			description: 'We will simply swim some rounds!',
+			imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Olympic_swimming_pool_%28Tbilisi%29.jpg/800px-Olympic_swimming_pool_%28Tbilisi%29.jpg',
+			address: '27th Nerd Road, 32523 New York',
+			contactEmail: 'swim@test.com',
+			isFavorite: false,
+		},
+	];
 
-  function addMeetup() {
-    const newMeetup = {
-      id: Math.random().toString(),
-      title: title,
-      subtitle: subtitle,
-      description: description,
-      imageUrl: imageUrl,
-      contactEmail: email,
-      address: address,
-    };
+	function addMeetup(meetup) {
+		if (meetup.detail) {
+			const newMeetup = {
+				id: Math.random().toString(),
+				title: meetup.detail.title,
+				subtitle: meetup.detail.subtitle,
+				description: meetup.detail.description,
+				imageUrl: meetup.detail.imageUrl,
+				contactEmail: meetup.detail.email,
+				address: meetup.detail.address,
+			};
 
-    // meetups.push(newMeetup); // DOES NOT WORK!
-    meetups = [newMeetup, ...meetups];
-  }
+			// meetups.push(newMeetup); // DOES NOT WORK!
+			meetups = [newMeetup, ...meetups];
+			addNewMeetup = false;
+		}
+	}
+
+	function updateFavorite(id) {
+		const index = meetups.findIndex((element) => element.id === id?.detail);
+		if (index !== -1) {
+			const meetupToUpdate = { ...meetups[index] };
+			meetupToUpdate.isFavorite = !meetupToUpdate.isFavorite;
+
+			const updatedMeetups = [...meetups];
+			updatedMeetups[index] = meetupToUpdate;
+			meetups = updatedMeetups;
+		}
+	}
+
+	function deleteMeetup(id) {
+		meetups = meetups.filter((element) => element.id !== id?.detail);
+	}
+
+	function reset() {
+		addNewMeetup = false;
+	}
 </script>
 
 <Header />
 
 <main>
-  <form on:submit|preventDefault={addMeetup}>
-    <TextInput id="title" label="Title" type="text" value={title} on:input={(event) => (title = event.target.value)} rows="" controlType="" />
-    <TextInput id="subtitle" label="Subtitle" type="text" value={subtitle} on:input={(event) => (subtitle = event.target.value)} rows="" controlType="" />
-    <TextInput id="address" label="Address" type="text" value={address} on:input={(event) => (address = event.target.value)} rows="" controlType="" />
-    <TextInput id="imageUrl" label="Image URL" type="text" value={imageUrl} on:input={(event) => (imageUrl = event.target.value)} rows="" controlType="" />
-    <TextInput id="email" label="E-Mail" type="email" value={email} on:input={(event) => (email = event.target.value)} rows="" controlType="" />
-    <TextInput id="description" label="Description" controlType="textarea" value={description} on:input={(event) => (description = event.target.value)} type="" rows="3" />
-    <Button type="submit" caption="Save" mode="" href="" />
-  </form>
-  <MeetupGrid {meetups} />
+	<section class="meetup-control">
+		<Button on:click={() => (addNewMeetup = true)}><span>New Meetup</span></Button>
+		{#if addNewMeetup}
+			<EditMeetup on:save={addMeetup} on:reset={reset} on:cancel={reset} />
+		{/if}
+	</section>
+	<MeetupGrid {meetups} on:togglefavorite={updateFavorite} on:delete={deleteMeetup} />
 </main>
 
 <style>
-  main {
-    margin-top: 5rem;
-  }
+	main {
+		margin-top: 5rem;
+	}
 
-  form {
-    width: 30rem;
-    max-width: 90%;
-    margin: auto;
-  }
+	.meetup-control {
+		margin-left: 1rem;
+	}
 </style>
