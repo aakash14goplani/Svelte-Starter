@@ -3,12 +3,13 @@
 	export let href = undefined;
 	export let mode = '';
 	export let color = '';
+	export let disable = false;
 </script>
 
 {#if href}
 	<a {href}><slot /></a>
 {:else}
-	<button class="{mode} {color}" {type} on:click><slot /></button>
+	<button class="{mode} {color}" {type} on:click disabled="{disable}"><slot /></button>
 {/if}
 
 <style>

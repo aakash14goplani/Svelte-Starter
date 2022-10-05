@@ -28,7 +28,7 @@
 			<p>{address}</p>
 		</div>
 		<div class="close">
-			<Button type="button" on:click={() => dispatch('delete', id)}><span>X</span></Button>
+			<Button type="button" on:click={() => dispatch('delete', id)} disable="{false}"><span>X</span></Button>
 		</div>
 	</header>
 	<div class="image">
@@ -38,9 +38,9 @@
 		<p>{description}</p>
 	</div>
 	<footer>
-		<Button href="mailto:{email}" type="button"><span>Contact</span></Button>
-		<Button mode="outline" color={isFavorite ? '' : 'success'} type="button" on:click={() => dispatch('togglefavorite', id)}><span>{isFavorite ? 'Unfavorite' : 'Favorite'}</span></Button>
-		<Button type="button"><span>Show Details</span></Button>
+		<Button href="mailto:{email}" type="button" disable="{false}"><span>Contact</span></Button>
+		<Button mode="outline" color={isFavorite ? '' : 'success'} type="button" on:click={() => dispatch('togglefavorite', id)} disable="{false}"><span>{isFavorite ? 'Unfavorite' : 'Favorite'}</span></Button>
+		<Button type="button" disable="{false}"><span>Show Details</span></Button>
 	</footer>
 </article>
 

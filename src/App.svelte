@@ -72,7 +72,7 @@
 
 <main>
 	<section class="meetup-control">
-		<Button on:click={() => (addNewMeetup = true)}><span>New Meetup</span></Button>
+		<Button on:click={() => (addNewMeetup = true)} disable="{false}"><span>New Meetup</span></Button>
 		{#if addNewMeetup}
 			<EditMeetup on:save={addMeetup} on:reset={reset} on:cancel={reset} />
 		{/if}

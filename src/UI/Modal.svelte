@@ -19,7 +19,7 @@
 	</div>
 	<footer>
 		<slot name="footer">
-			<Button on:click={closeModal}>Close</Button>
+			<Button on:click={closeModal} disable="{false}">Close</Button>
 		</slot>
 	</footer>
 </div>
