@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import TextInput from '../UI/TextInput.svelte';
 	import Button from '../UI/Button.svelte';
 	import Modal from '../UI/Modal.svelte';
@@ -41,7 +41,7 @@
 			label="Title"
 			type="text"
 			value={title}
-			on:input={(event) => (title = event.target.value)}
+			on:input={(event) => (title = event.target?.value)}
 			isValid={!isEmpty(title)}
 			errorMessage="Please enter valid Title"
 		/>
@@ -51,7 +51,7 @@
 			label="Subtitle"
 			type="text"
 			value={subtitle}
-			on:input={(event) => (subtitle = event.target.value)}
+			on:input={(event) => (subtitle = event.target?.value)}
 			isValid={!isEmpty(subtitle)}
 			errorMessage="Please enter valid Subtitle"
 		/>
@@ -61,7 +61,7 @@
 			label="Address"
 			type="text"
 			value={address}
-			on:input={(event) => (address = event.target.value)}
+			on:input={(event) => (address = event.target?.value)}
 			isValid={!isEmpty(address)}
 			errorMessage="Please enter valid Address"
 		/>
@@ -71,7 +71,7 @@
 			label="Image URL"
 			type="text"
 			value={imageUrl}
-			on:input={(event) => (imageUrl = event.target.value)}
+			on:input={(event) => (imageUrl = event.target?.value)}
 			isValid={!isEmpty(imageUrl)}
 			errorMessage="Please enter valid Image URL"
 		/>
@@ -81,7 +81,7 @@
 			label="E-Mail"
 			type="email"
 			value={email}
-			on:input={(event) => (email = event.target.value)}
+			on:input={(event) => (email = event.target?.value)}
 			isValid={isValidEmail(email)}
 			errorMessage="Please enter valid email address"
 		/>
@@ -91,7 +91,7 @@
 			label="Description"
 			controlType="textarea"
 			value={description}
-			on:input={(event) => (description = event.target.value)}
+			on:input={(event) => (description = event.target?.value)}
 			rows="3"
 			isValid={!isEmpty(description)}
 			errorMessage="Please enter some description regarding meetup"
