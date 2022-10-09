@@ -2,17 +2,29 @@
 	import Button from '../UI/Button.svelte';
 	import Badge from '../UI/Badge.svelte';
 	import { createEventDispatcher } from 'svelte';
+	import { meetupsReducer } from './meetups-store';
 
 	export let title;
 	export let subtitle;
 	export let imageUrl;
 	export let description;
 	export let address;
-	export let email;
 	export let id;
 	export let isFavorite;
 
 	const dispatch = createEventDispatcher();
+
+	function updateFavorite() {
+		meetupsReducer.updateFavorite(id);
+	}
+
+	function deleteMeetup() {
+		meetupsReducer.deleteMeetup(id);
+	}
+
+	function updatePageMode() {
+		meetupsReducer.updateLandingPageMode({ mode: 'details', id });
+	}
 </script>
 
 <article class={'meetup-item-' + id}>
@@ -28,7 +40,10 @@
 			<p>{address}</p>
 		</div>
 		<div class="close">
-			<Button type="button" on:click={() => dispatch('delete', id)} disable="{false}"><span>X</span></Button>
+			<!-- <Button type="button" on:click={() => dispatch('delete', id)}> -->
+			<Button type="button" on:click={deleteMeetup}>
+				<span>X</span>
+			</Button>
 		</div>
 	</header>
 	<div class="image">
@@ -38,9 +53,26 @@
 		<p>{description}</p>
 	</div>
 	<footer>
-		<Button href="mailto:{email}" type="button" disable="{false}"><span>Contact</span></Button>
-		<Button mode="outline" color={isFavorite ? '' : 'success'} type="button" on:click={() => dispatch('togglefavorite', id)} disable="{false}"><span>{isFavorite ? 'Unfavorite' : 'Favorite'}</span></Button>
-		<Button type="button" disable="{false}"><span>Show Details</span></Button>
+		<Button type="button" on:click={() => dispatch('edit', id)}>
+			<span>Edit</span>
+		</Button>
+		<!-- <Button
+			mode="outline"
+			color={isFavorite ? '' : 'success'}
+			type="button"
+			on:click={() => dispatch('togglefavorite', id)}
+		> -->
+		<Button
+			mode="outline"
+			color={isFavorite ? '' : 'success'}
+			type="button"
+			on:click={updateFavorite}
+		>
+			<span>{isFavorite ? 'Unfavorite' : 'Favorite'}</span>
+		</Button>
+		<Button type="button" on:click={updatePageMode}>
+			<span>Show Details</span>
+		</Button>
 	</footer>
 </article>
 

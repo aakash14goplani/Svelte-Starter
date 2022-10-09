@@ -16,7 +16,8 @@
 		"lib": ["esnext", "dom"],
 		"types": ["svelte"],
 		"importHelpers": true,
-		"allowJs": true
+		"allowJs": true,
+		"importsNotUsedAsValues": "remove"
 	},
 	"include": ["./src/**/*.ts", "./src/**/*.js", "./src/**/*.svelte"],
 	"exclude": ["./node_modules/*", "./__sapper__/*", "./public/*"]

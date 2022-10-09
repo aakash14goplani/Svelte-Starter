@@ -4,24 +4,46 @@
 	import Modal from '../UI/Modal.svelte';
 	import { createEventDispatcher } from 'svelte';
 	import { isEmpty, isValidEmail } from '../helpers/validation';
+	import { meetupsReducer } from './meetups-store';
 
-	let title = '';
-	let subtitle = '';
+	export let id: string = ''; // if id is present then it is `edit` mode else `add` mode
+	let title: string = '';
+	let subtitle: string = '';
 	let address = '';
-	let email = '';
-	let description = '';
-	let imageUrl = '';
-	let isFormValid = false;
+	let email: string = '';
+	let description: string = '';
+	let imageUrl: string = '';
+	let isFormValid: boolean = false;
+
+	if (id) {
+		const unsubscribe = meetupsReducer.subscribe(items => {
+      const selectedMeetup = items.find(i => i.id === id);
+      title = selectedMeetup?.title || '';
+      subtitle = selectedMeetup?.subtitle || '';
+      address = selectedMeetup?.address || '';
+      email = selectedMeetup?.contactEmail || '';
+      description = selectedMeetup?.description || '';
+      imageUrl = selectedMeetup?.imageUrl || '';
+    });
+
+    unsubscribe();
+	}
 
 	const dispatch = createEventDispatcher();
 
 	$: {
-		isFormValid = !isEmpty(title) && !isEmpty(subtitle) && !isEmpty(address) &&
-			!isEmpty(imageUrl) && !isEmpty(imageUrl) && isValidEmail(email) &&
+		isFormValid =
+			!isEmpty(title) &&
+			!isEmpty(subtitle) &&
+			!isEmpty(address) &&
+			!isEmpty(imageUrl) &&
+			!isEmpty(imageUrl) &&
+			isValidEmail(email) &&
 			!isEmpty(description);
 	}
 
 	function submitForm() {
+		/* It was dispatching an event that was handled by app.svelte
 		dispatch('save', {
 			title: title,
 			subtitle: subtitle,
@@ -29,7 +51,25 @@
 			imageUrl: imageUrl,
 			contactEmail: email,
 			address: address,
-		});
+		}); */
+
+		dispatch('save'); // required to close modal
+
+		const meetup = {
+			title,
+			subtitle,
+			description,
+			imageUrl,
+			contactEmail: email,
+			address,
+			isFavorite: false
+		};
+
+		if (!id) {
+			meetupsReducer.addMeetup({ id: 'm' + Math.floor(Math.random() * 9 + 55).toString(), ...meetup });
+		} else {
+			meetupsReducer.updateMeetup(id, { id, ...meetup });
+		}
 	}
 </script>
 
@@ -98,8 +138,12 @@
 		/>
 	</form>
 	<div slot="footer" class="button-group">
-		<Button type="submit" on:click={submitForm} disable="{!isFormValid}"><span>Save</span></Button>
-		<Button type="reset" on:click={() => dispatch('reset')} disable="{false}"><span>Clear</span></Button>
+		<Button type="submit" on:click={submitForm} disable={!isFormValid}
+			><span>Save</span></Button
+		>
+		<Button type="reset" on:click={() => dispatch('reset')} disable={false}
+			><span>Clear</span></Button
+		>
 	</div>
 </Modal>
 
