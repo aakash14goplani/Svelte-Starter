@@ -4,6 +4,8 @@
 	import type { IMeetups } from './types';
 	import Button from '../UI/Button.svelte'; 
 	import { createEventDispatcher } from 'svelte';
+  import { scale } from "svelte/transition";
+  import { flip } from "svelte/animate";
 
 	export let meetups: IMeetups[];
 
@@ -25,6 +27,7 @@
 </section>
 <section id="meetups">
 	{#each filteredMeetups as meetup, index (meetup.id)}
+	<div transition:scale animate:flip={{duration: 300}}>
 		<MeetupItem
 			title={meetup.title}
 			subtitle={meetup.subtitle}
@@ -37,21 +40,24 @@
 			on:delete
 			on:edit
 		/>
+	</div>
 	{/each}
 </section>
 
 <style>
 	section {
-		width: 98%;
-		display: grid;
-		grid-template-columns: 1fr;
-		grid-gap: 1rem;
+		display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-wrap: wrap;
 	}
 
 	#meetup-controls {
 		margin: 1rem;
 		display: flex;
 		justify-content: space-around;
+		width: 90%;
 	}
 
 	@media (min-width: 768px) {

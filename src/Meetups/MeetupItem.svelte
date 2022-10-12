@@ -79,6 +79,7 @@
 		border-radius: 5px;
 		background: white;
 		margin: 1rem;
+		width: 25rem;
 	}
 
 	header,
