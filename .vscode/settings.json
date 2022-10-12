@@ -2,5 +2,6 @@
 	"editor.fontFamily": "Fira Code Retina",
 	"editor.tabSize": 2,
 	"html.format.wrapAttributes": "force-aligned",
-	"html.format.wrapAttributesIndentSize": 80
+	"html.format.wrapAttributesIndentSize": 80,
+	"editor.formatOnSave": false
 }

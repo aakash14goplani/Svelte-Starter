@@ -15,7 +15,7 @@
 	const dispatch = createEventDispatcher();
 </script>
 
-<article class={'meetup-item-' + id}>
+<article class="{'meetup-item-' + id}">
 	<header>
 		<div class="details">
 			<h1>
@@ -28,19 +28,25 @@
 			<p>{address}</p>
 		</div>
 		<div class="close">
-			<Button type="button" on:click={() => dispatch('delete', id)} disable="{false}"><span>X</span></Button>
+			<Button type="button" on:click="{() => dispatch('delete', id)}" disable="{false}"><span>X</span></Button>
 		</div>
 	</header>
 	<div class="image">
-		<img src={imageUrl} alt={title} />
+		<img src="{imageUrl}" alt="{title}" />
 	</div>
 	<div class="content">
 		<p>{description}</p>
 	</div>
 	<footer>
-		<Button href="mailto:{email}" type="button" disable="{false}"><span>Contact</span></Button>
-		<Button mode="outline" color={isFavorite ? '' : 'success'} type="button" on:click={() => dispatch('togglefavorite', id)} disable="{false}"><span>{isFavorite ? 'Unfavorite' : 'Favorite'}</span></Button>
-		<Button type="button" disable="{false}"><span>Show Details</span></Button>
+		<Button href="mailto:{email}" type="button" disable="{false}">
+			<span>Contact</span>
+		</Button>
+		<Button mode="outline" color="{isFavorite ? '' : 'success'}" type="button" on:click="{() => dispatch('togglefavorite', id)}" disable="{false}">
+			<span>{isFavorite ? 'Unfavorite' : 'Favorite'}</span>
+		</Button>
+		<Button type="button" disable="{false}">
+			<span>Show Details</span>
+		</Button>
 	</footer>
 </article>
 

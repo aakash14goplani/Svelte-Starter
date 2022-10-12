@@ -6,8 +6,6 @@
   "insertPragma": false,
   "singleAttributePerLine": false,
   "bracketSameLine": false,
-  "jsxBracketSameLine": false,
-  "jsxSingleQuote": false,
   "printWidth": 300,
   "proseWrap": "preserve",
   "quoteProps": "as-needed",
@@ -17,7 +15,9 @@
   "tabWidth": 2,
   "trailingComma": "es5",
   "useTabs": true,
-  "vueIndentScriptAndStyle": false,
-  "filepath": "c:\\Users\\hp\\AppData\\Roaming\\Code\\User\\settings.json",
-  "parser": "json"
+  "svelteSortOrder": "options-scripts-markup-styles",
+  "svelteStrictMode": true,
+  "svelteBracketNewLine": true,
+  "svelteAllowShorthand": true,
+  "svelteIndentScriptAndStyle": true
 }
