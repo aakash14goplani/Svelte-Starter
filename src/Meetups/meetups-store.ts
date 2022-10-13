@@ -33,9 +33,10 @@ const landingPageMode = writable<ILandingPageMode>({
 
 export const meetupsReducer = {
 	subscribe: meetupsStore.subscribe,
+	setMeetups: (meetups: IMeetups[]) => meetupsStore.set(meetups),
 	addMeetup: (meetup: IMeetups) => {
 		const newMeetup: IMeetups = {
-			id: 'm' + Math.floor(Math.random() * 9 + 3).toString(),
+			id: meetup.id,
 			title: meetup.title,
 			subtitle: meetup.subtitle,
 			description: meetup.description,

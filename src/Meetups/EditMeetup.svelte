@@ -5,6 +5,8 @@
 	import { createEventDispatcher } from 'svelte';
 	import { isEmpty, isValidEmail } from '../helpers/validation';
 	import { meetupsReducer } from './meetups-store';
+  import { fetchData } from '$src/helpers/api';
+  import { ENP_POINT } from '$src/types/types';
 
 	export let id: string = ''; // if id is present then it is `edit` mode else `add` mode
 	let title: string = '';
@@ -66,7 +68,14 @@
 		};
 
 		if (!id) {
-			meetupsReducer.addMeetup({ id: 'm' + Math.floor(Math.random() * 9 + 55).toString(), ...meetup });
+			fetchData({
+				url: ENP_POINT,
+				body: JSON.stringify(meetup),
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			}).then(data => meetupsReducer.addMeetup({ ...meetup, id: data.name }));
 		} else {
 			meetupsReducer.updateMeetup(id, { id, ...meetup });
 		}

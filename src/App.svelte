@@ -1,16 +1,32 @@
 <script lang="ts">
 	import Header from './UI/Header.svelte';
-	import Button from './UI/Button.svelte';
 	import MeetupGrid from './Meetups/MeetupGrid.svelte';
 	import EditMeetup from './Meetups/EditMeetup.svelte';
 	import MeetupDetails from './Meetups/MeetupDetails.svelte';
 	import { meetupsReducer } from './Meetups/meetups-store';
-  import type { IMeetups } from './Meetups/types';
+  import { ENP_POINT, type IMeetups } from './types/types';
+  import { fetchData } from './helpers/api';
+	import LoadingSpinner from './UI/LoadingSpinner.svelte';
 
 	let addNewMeetup = false;
 	let pageMode: 'overview' | 'details' = 'overview';
 	let meetupId = '';
 	let editMeetupId = '';
+	let isLoading: boolean = true;
+
+	fetchData({
+		url: ENP_POINT,
+		method: 'GET'
+	}).then((data: any) => {
+		const meetups = [];
+		if (Object.keys(data).length > 0) {
+			for (const key of Object.keys(data)) {
+				meetups.push({ id: key, ...data[key] })
+			}
+		}
+		meetupsReducer.setMeetups(meetups);
+		isLoading = false;
+	});
 
 	meetupsReducer.getLandingPageMode((entry) => {
 		pageMode= entry.mode;
@@ -72,18 +88,22 @@
 
 <main>
 	{#if pageMode === 'overview'}
-	<section class="meetup-control">
-		{#if addNewMeetup}
-			<EditMeetup id={editMeetupId.trim()} on:save={addMeetup} on:reset={reset} on:cancel={reset} />
+		<section class="meetup-control">
+			{#if addNewMeetup}
+				<EditMeetup id={editMeetupId.trim()} on:save={addMeetup} on:reset={reset} on:cancel={reset} />
+			{/if}
+		</section>
+		{#if isLoading}
+			<LoadingSpinner />
+		{:else}
+			<MeetupGrid
+				meetups={$meetupsReducer}
+				on:togglefavorite={updateFavorite}
+				on:delete={deleteMeetup}
+				on:edit={editMeetup}
+				on:add={(event) => addNewMeetup = event.detail}
+			/>
 		{/if}
-	</section>
-	<MeetupGrid
-		meetups={$meetupsReducer}
-		on:togglefavorite={updateFavorite}
-		on:delete={deleteMeetup}
-		on:edit={editMeetup}
-		on:add={(event) => addNewMeetup = event.detail}
-	/>
 	{:else}
 		<MeetupDetails id={meetupId} />
 	{/if}
@@ -92,9 +112,11 @@
 <style>
 	main {
 		margin-top: 5rem;
-	}
-
-	.meetup-control {
-		margin-left: 1rem;
+		display: flex;
+    flex-direction: column;
+    align-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+		padding: 1rem;
 	}
 </style>

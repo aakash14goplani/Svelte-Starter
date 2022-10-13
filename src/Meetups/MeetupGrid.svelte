@@ -1,7 +1,7 @@
 <script lang="ts">
 	import MeetupItem from './MeetupItem.svelte';
 	import MeetupFilter from './MeetupFilter.svelte';
-	import type { IMeetups } from './types';
+	import type { IMeetups } from '../types/types';
 	import Button from '../UI/Button.svelte'; 
 	import { createEventDispatcher } from 'svelte';
   import { scale } from "svelte/transition";
@@ -26,26 +26,30 @@
 	</Button>
 </section>
 <section id="meetups">
-	{#each filteredMeetups as meetup, index (meetup.id)}
-	<div transition:scale animate:flip={{duration: 300}}>
-		<MeetupItem
-			title={meetup.title}
-			subtitle={meetup.subtitle}
-			description={meetup.description}
-			imageUrl={meetup.imageUrl}
-			address={meetup.address}
-			id={meetup.id}
-			isFavorite={meetup.isFavorite}
-			on:togglefavorite
-			on:delete
-			on:edit
-		/>
-	</div>
-	{/each}
+	{#if filteredMeetups.length < 1}
+		<p id="no-meetup-text">No meetups found, you can start adding new meetups!</p>
+	{:else}
+		{#each filteredMeetups as meetup, index (meetup.id)}
+			<div transition:scale animate:flip={{duration: 300}}>
+				<MeetupItem
+					title={meetup.title}
+					subtitle={meetup.subtitle}
+					description={meetup.description}
+					imageUrl={meetup.imageUrl}
+					address={meetup.address}
+					id={meetup.id}
+					isFavorite={meetup.isFavorite}
+					on:togglefavorite
+					on:delete
+					on:edit
+				/>
+			</div>
+		{/each}
+	{/if}
 </section>
 
 <style>
-	section {
+	#meetups {
 		display: flex;
     flex-direction: row;
     justify-content: space-evenly;
@@ -54,15 +58,9 @@
 	}
 
 	#meetup-controls {
-		margin: 1rem;
+		margin: 1rem 0;
 		display: flex;
-		justify-content: space-around;
-		width: 90%;
-	}
-
-	@media (min-width: 768px) {
-		section {
-			grid-template-columns: repeat(2, 1fr);
-		}
+		justify-content: space-evenly;
+		width: 100%;
 	}
 </style>

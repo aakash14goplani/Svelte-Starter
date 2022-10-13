@@ -2,7 +2,7 @@
 	import { onDestroy } from 'svelte';
 	import { meetupsReducer } from './meetups-store.js';
 	import Button from '../UI/Button.svelte';
-  import type { IMeetups } from './types.js';
+  import type { IMeetups } from '../types/types.js';
 
 	export let id = '';
 	let selectedMeetup: IMeetups | undefined;
