@@ -4,33 +4,51 @@
 	import EditMeetup from './Meetups/EditMeetup.svelte';
 	import MeetupDetails from './Meetups/MeetupDetails.svelte';
 	import { meetupsReducer } from './Meetups/meetups-store';
-  import { ENP_POINT, type IMeetups } from './types/types';
+  import { EDIT_MEETUP_END_POINT, ENP_POINT, type IMeetups } from './types/types';
   import { fetchData } from './helpers/api';
 	import LoadingSpinner from './UI/LoadingSpinner.svelte';
-
+  import Error from './UI/Error.svelte';
+  import { onDestroy } from 'svelte';
 	let addNewMeetup = false;
 	let pageMode: 'overview' | 'details' = 'overview';
 	let meetupId = '';
 	let editMeetupId = '';
 	let isLoading: boolean = true;
+	let showApiErrorModal: boolean = false;
+	let errorMessage: string = '';
+	const subscriberArray: any = [];
 
 	fetchData({
 		url: ENP_POINT,
 		method: 'GET'
 	}).then((data: any) => {
 		const meetups = [];
-		if (Object.keys(data).length > 0) {
+		if (Object.keys(data).length > 0 && typeof data === 'object') {
 			for (const key of Object.keys(data)) {
 				meetups.push({ id: key, ...data[key] })
 			}
+			meetupsReducer.setMeetups(meetups.reverse());
 		}
-		meetupsReducer.setMeetups(meetups);
-		isLoading = false;
-	});
 
-	meetupsReducer.getLandingPageMode((entry) => {
-		pageMode= entry.mode;
-		meetupId = entry.id;
+		isLoading = false;
+	}).catch(error => meetupsReducer.setApiErrorTo({
+		errorStatus: true,
+		errorMessage: error
+	}));
+
+	subscriberArray.push(
+		meetupsReducer.getLandingPageMode((entry) => {
+			pageMode= entry.mode;
+			meetupId = entry.id;
+		}),
+		meetupsReducer.isApiError((status) => {
+			showApiErrorModal = status.errorStatus;
+			errorMessage = status.errorMessage;
+		})
+	);
+
+	onDestroy(() => {
+		subscriberArray.forEach((unsubscribe: any) => unsubscribe());
 	});
 
 	function addMeetup(meetup: any) {
@@ -68,7 +86,17 @@
 	}
 
 	function deleteMeetup(id: any) {
-		meetupsReducer.deleteMeetup(id?.detail as string); // <- now redundant as handled by meetup-item comp.
+		fetchData({
+				url: EDIT_MEETUP_END_POINT + `/${id?.detail}.json`,
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			}).then(data => meetupsReducer.deleteMeetup(id?.detail as string))
+			.catch(error => meetupsReducer.setApiErrorTo({
+				errorStatus: true,
+				errorMessage: error
+			}));
 		// meetupArray = meetupArray.filter((element) => element.id !== id?.detail);
 	}
 
@@ -82,11 +110,22 @@
 		editMeetupId = id.detail as string ;
 		addNewMeetup = true;
 	}
+
+	function resetErrorStatus() {
+		showApiErrorModal = false;
+		meetupsReducer.setApiErrorTo({
+			errorStatus: false,
+			errorMessage: ''
+		});
+	}
 </script>
 
 <Header />
 
 <main>
+	{#if showApiErrorModal}
+		<Error message="{errorMessage}" on:cancel="{resetErrorStatus}" />
+	{/if}
 	{#if pageMode === 'overview'}
 		<section class="meetup-control">
 			{#if addNewMeetup}

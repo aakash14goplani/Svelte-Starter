@@ -1,25 +1,56 @@
-<script>
+<script lang="ts">
 	import Button from '../UI/Button.svelte';
 	import Badge from '../UI/Badge.svelte';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onDestroy } from 'svelte';
 	import { meetupsReducer } from './meetups-store';
+  import { fetchData } from '$src/helpers/api';
+  import { EDIT_MEETUP_END_POINT } from '$src/types/types';
+  import Error from '../UI/Error.svelte';
 
-	export let title;
-	export let subtitle;
-	export let imageUrl;
-	export let description;
-	export let address;
-	export let id;
-	export let isFavorite;
+	export let title: string = '';
+	export let subtitle: string = '';
+	export let imageUrl: string = '';
+	export let description: string = '';
+	export let address: string = '';
+	export let id: string = '';
+	export let isFavorite: boolean = false;
+	let showApiErrorModal: boolean = false;
+	let errorMessage: string = '';
+	let isLoading = false;
 
 	const dispatch = createEventDispatcher();
 
+	const unsubscribe = meetupsReducer.isApiError((status) => {
+		showApiErrorModal = status.errorStatus;
+		errorMessage = status.errorMessage;
+	});
+	
+	onDestroy(() => unsubscribe());
+
 	function updateFavorite() {
-		meetupsReducer.updateFavorite(id);
+		isLoading = true;
+		fetchData({
+				url: EDIT_MEETUP_END_POINT + `/${id}.json`,
+				body: JSON.stringify({ isFavorite: !isFavorite }),
+				method: 'PATCH',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			}).then((data) => {
+				isLoading = false;
+				meetupsReducer.updateFavorite(id);
+			}).catch(error => meetupsReducer.setApiErrorTo({
+				errorStatus: true,
+				errorMessage: error
+			}));
 	}
 
-	function deleteMeetup() {
-		meetupsReducer.deleteMeetup(id);
+	function resetErrorStatus() {
+		showApiErrorModal = false;
+		meetupsReducer.setApiErrorTo({
+			errorStatus: false,
+			errorMessage: ''
+		});
 	}
 
 	function updatePageMode() {
@@ -27,6 +58,9 @@
 	}
 </script>
 
+{#if showApiErrorModal}
+	<Error message="{errorMessage}" on:cancel="{resetErrorStatus}" />
+{/if}
 <article class="{'meetup-item-' + id}">
 	<header>
 		<div class="details">
@@ -59,14 +93,19 @@
 			type="button"
 			on:click={() => dispatch('togglefavorite', id)}
 		> -->
-		<Button
-			mode="outline"
-			color={isFavorite ? '' : 'success'}
-			type="button"
-			on:click={updateFavorite}
-		>
-			<span>{isFavorite ? 'Unfavorite' : 'Favorite'}</span>
-		</Button>
+		{#if isLoading}
+      <!-- <LoadingSpinner /> -->
+      <span>Changing...</span>
+    {:else}
+			<Button
+				mode="outline"
+				color={isFavorite ? '' : 'success'}
+				type="button"
+				on:click={updateFavorite}
+			>
+				<span>{isFavorite ? 'Unfavorite' : 'Favorite'}</span>
+			</Button>
+    {/if}
 		<Button type="button" on:click={updatePageMode}>
 			<span>Show Details</span>
 		</Button>

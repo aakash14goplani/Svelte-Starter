@@ -1,6 +1,6 @@
-<script>
-	export let type = undefined;
-	export let href = undefined;
+<script lang="ts">
+	export let type: string = '';
+	export let href: string = '';
 	export let mode = '';
 	export let color = '';
 	export let disable = false;

@@ -19,7 +19,9 @@ export interface IFetchRequest {
 	headers: any;
 	body: any;
 	options: any;
-	method: 'GET' | 'POST';
+	method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 }
 
-export const ENP_POINT: string = 'https://angular-fire-a31ae-default-rtdb.firebaseio.com/meetups.json';
+const ROOT_END_POINT: string = 'https://angular-fire-a31ae-default-rtdb.firebaseio.com/meetups';
+export const ENP_POINT: string = ROOT_END_POINT + '.json';
+export const EDIT_MEETUP_END_POINT: string = ROOT_END_POINT;

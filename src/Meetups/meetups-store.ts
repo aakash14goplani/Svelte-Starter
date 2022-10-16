@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 
-const meetupsStore = writable<Array<IMeetups>>([
+const meetups = [
 	{
 		id: 'm1',
 		title: 'Coding Bootcamp',
@@ -24,7 +24,14 @@ const meetupsStore = writable<Array<IMeetups>>([
 		contactEmail: 'swim@test.com',
 		isFavorite: false,
 	},
-]);
+];
+
+const meetupsStore = writable<Array<IMeetups>>([]); // (meetups);
+
+const isApiError = writable<IApiError>({
+	errorStatus: false,
+	errorMessage: ''
+});
 
 const landingPageMode = writable<ILandingPageMode>({
 	mode: 'overview',
@@ -84,6 +91,8 @@ export const meetupsReducer = {
 		landingPageMode.update((_) => input);
 	},
 	getLandingPageMode: landingPageMode.subscribe,
+	isApiError: isApiError.subscribe,
+	setApiErrorTo: (status: IApiError) => isApiError.set(status)
 };
 
 interface IMeetups {
@@ -100,4 +109,9 @@ interface IMeetups {
 interface ILandingPageMode {
 	mode: 'overview' | 'details';
 	id: string;
+}
+
+interface IApiError {
+	errorStatus: boolean;
+	errorMessage: string;
 }

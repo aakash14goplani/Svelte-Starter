@@ -1,13 +1,13 @@
-<script>
-	export let controlType = undefined;
-	export let id = undefined;
-	export let label = undefined;
-	export let rows = undefined;
-	export let value = undefined;
-	export let type = undefined;
-	export let isValid = true;
-	export let errorMessage = '';
-	let didUserInteract = false;
+<script lang="ts">
+	export let controlType: string = '';
+	export let id: string = '';
+	export let label: string = '';
+	export let rows: number = 1;
+	export let value: string = '';
+	export let type: string = '';
+	export let isValid: boolean = true;
+	export let errorMessage: string = '';
+	let didUserInteract: boolean = false;
 </script>
 
 <div class="form-control">
